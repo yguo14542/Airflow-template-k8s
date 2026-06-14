@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: image-prepull
+spec:
+  selector:
+    matchLabels:
+      app: image-prepull
+  template:
+    metadata:
+      labels:
+        app: image-prepull
+    spec:
+      imagePullSecrets:
+      - name: regcred  # secret to pull image
+      initContainers: # The goal is to "trigger node to pull the image," and then exit successfully immediately after the pull is complete. This process is executed once per DaemonSet Pod.
+      - name: prepull
+        image: yguo14542/llama-factory:20260130
+        command: ["sh", "-c", "true"]
+      containers: # The pause container simply remains in the Pod in a "Running" state and does not consume resources. This way, once the initContainer completes, the Pod will not keep restarting, and the image will not be downloaded repeatedly.
+      - name: pause
+        image: k8s.gcr.io/pause:3.5
+        resources:
+          requests:
+            cpu: "1m"
+            memory: "8Mi"
+          limits:
+            cpu: "1m"
+            memory: "8Mi"
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule
