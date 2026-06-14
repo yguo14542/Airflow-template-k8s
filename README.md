@@ -1,8 +1,5 @@
 # Airflow Template with K8s
 
-[[_TOC_]]
-
-
 ## What is this Repo?
 This Airflow Template provides a universal DAG development framework. It helps developers quickly build DAGs equipped with standard features such as `KubernetesPodOperator`, `BranchPythonOperator`, notifications, and workspace cleanup.
 
